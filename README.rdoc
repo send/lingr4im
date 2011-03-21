@@ -1,6 +1,15 @@
 = lingr4im
 
-Description goes here.
+Linger4IM is a jabber gateway for lingr.com.
+
+== Usage
+
+I execute this gateway at lingr@send.sh. So you try to subscribe this account, and type /help
+
+== TODO
+
+* Write more documents.
+* Create gem.
 
 == Contributing to lingr4im
  
