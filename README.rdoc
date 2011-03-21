@@ -4,7 +4,7 @@ Linger4IM is a jabber gateway for lingr.com.
 
 == Usage
 
-I execute this gateway at lingr@send.sh. So you try to subscribe this account, and type /help
+I've running this gateway at lingr@send.sh. So you can try to subscribe this account, and type "/help".
 
 == TODO
 
