@@ -1,0 +1,13 @@
+app_key: [your key]
+app_secret: [your secret]
+db_user: dankogai
+db_pass: kogaidan
+db_host: 127.0.0.1
+db_scheme: lingr
+jid: [your gateway jid]
+jpassword: dankogai
+jserver: jabber.example.com
+jport: 5222
+log_level: warn
+log_file: path/to/file
+icon: resources/images/icon.png
