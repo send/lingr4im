@@ -5,8 +5,6 @@ require 'yaml'
 require 'json'
 require 'logger'
 require 'sequel'
-require 'nkf'
-require 'net/smtp'
 require 'base64'
 
 
@@ -416,7 +414,7 @@ EOT
   subscription :unsubscribe? do |s|
     write_to_stream s.unsubscribe!
     user = User.from_message(s)
-    user.delete_all_user_rooms
+    user.remove_all_user_rooms
     user.destroy
   end
 
