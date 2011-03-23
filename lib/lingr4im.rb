@@ -197,8 +197,8 @@ EOT
   end
 
   # login command
-  message :chat?, :body => %r{^/login\s+(?:\w+)\s(?:\w+)$} do |msg|
-    return help msg unless %r{^/login\s+(\w+)\s(\w+)$} =~ msg.body
+  message :chat?, :body => %r{^(?:;|/)login\s+(?:\w+)\s(?:\w+)$} do |msg|
+    return help msg unless %r{^(?:;|/)login\s+(\w+)\s(\w+)$} =~ msg.body
     _user = $1
     _password = $2
     Lingr.login(
@@ -222,7 +222,7 @@ EOT
   end
   
   # logout command
-  message :chat?, :body => %r{^/logout$} do |msg|
+  message :chat?, :body => %r{^(?:;|/)logout$} do |msg|
     user = User.from_message(msg)
     Lingr.logout(
       :session => user.session,
@@ -237,7 +237,7 @@ EOT
   end
 
   # rooms
-  message :chat?, :body => %r{^/rooms$} do |msg|
+  message :chat?, :body => %r{^(?:;|/)rooms$} do |msg|
     user = User.from_message(msg)
     Lingr.rooms(
       :session => user.session,
@@ -251,17 +251,17 @@ EOT
   end
 
   # join
-  message :chat?, :body => %r{^/(?:join)\s+(?:\w+)$} do |msg|
-    return help msg unless %r{^/join\s+(\w+)$} =~ msg.body
+  message :chat?, :body => %r{^(?:;|/)(?:join)\s+(?:\w+)$} do |msg|
+    return help msg unless %r{^(?:;|/)join\s+(\w+)$} =~ msg.body
     user = User.from_message(msg)
     room = $1
     subscribe :user => user, :room => room
   end
 
   # show room
-  message :chat?, :body => %r{^/show} do |msg|
+  message :chat?, :body => %r{^(?:;|/)show} do |msg|
     user = User.from_message(msg)
-    room = (%r{^/show\s+(\w+)$} =~ msg.body) ? $1 : user.current_room
+    room = (%r{^(?:;|/)show\s+(\w+)$} =~ msg.body) ? $1 : user.current_room
     if room.empty?
       say user.jid, "required room or joined some room"
       return
@@ -281,8 +281,8 @@ EOT
   end
 
   # show room archive
-  message :chat?, :body => %r{^/archive\s+(?:\w+)\s+(?:\d+)$} do |msg|
-    return help msg unless %r{^/archive\s+(\w+)\s+(\d+)$} =~ msg.body
+  message :chat?, :body => %r{^(?:;|/)archive\s+(?:\w+)\s+(?:\d+)$} do |msg|
+    return help msg unless %r{^(?:;|/)archive\s+(\w+)\s+(\d+)$} =~ msg.body
     user = User.from_message(msg)
     room = $1
     before = $2
@@ -303,9 +303,9 @@ EOT
   end
 
   #leave
-  message :chat?, :body => %r{^/leave} do |msg|
+  message :chat?, :body => %r{^(?:;|/)leave} do |msg|
     user = User.from_message(msg)
-    room = (%r{^/leave\s+(\w+)$} =~ msg.body) ? $1 : user.current_room
+    room = (%r{^(?:;|/)leave\s+(\w+)$} =~ msg.body) ? $1 : user.current_room
     if room.empty?
       say user.jid, "required room or joined some room"
       return
@@ -329,13 +329,13 @@ EOT
   end
 
   #current
-  message :chat?, :body => %r{^/current} do |msg|
+  message :chat?, :body => %r{^(?:;|/)current} do |msg|
     user = User.from_message(msg)
     say user.jid, user.current_room
   end
 
   #on
-  message :chat?, :body => %r{^/on} do |msg|
+  message :chat?, :body => %r{^(?:;|/)on} do |msg|
     user = User.from_message(msg)
     unless user.observed
       user.set(:observed => true).save_changes
@@ -345,15 +345,15 @@ EOT
   end
 
   #off
-  message :chat?, :body => %r{^/off} do |msg|
+  message :chat?, :body => %r{^(?:;|/)off} do |msg|
     user = User.from_message(msg)
     user.set(:observed => false).save_changes
     say user.jid, "stop observing"
   end
 
   #switch
-  message :chat?, :body => %r{^/switch\s(?:\w+)$} do |msg|
-    return help msg unless %r{^/switch\s+(\w+)$} =~ msg.body
+  message :chat?, :body => %r{^(?:;|/)switch\s(?:\w+)$} do |msg|
+    return help msg unless %r{^(?:;|/)switch\s+(\w+)$} =~ msg.body
     room = $1
     user = User.from_message(msg)
     user_room = UserRoom.filter(:user_id => user.id, :room => room).first
@@ -366,8 +366,8 @@ EOT
   end
 
   # say
-  message :chat?, :body =>%r{^/say\s+(?:\w+)\s+(?:.+)$} do |msg|
-    return help msg unless %r{^/say\s+(\w+)\s+(.+)$} =~ msg.body
+  message :chat?, :body =>%r{^(?:;|/)say\s+(?:\w+)\s+(?:.+)$} do |msg|
+    return help msg unless %r{^(?:;|/)say\s+(\w+)\s+(.+)$} =~ msg.body
     user = User.from_message(msg)
     room = $1
     text = $2
@@ -385,12 +385,12 @@ EOT
   end
 
   #help
-  message :chat?, :body => %r{^/} do |msg|
+  message :chat?, :body => %r{^(?:;|/)} do |msg|
     help msg
   end
 
   # say current room
-  message :chat?, :body => %r{^[^/]} do |msg|
+  message :chat?, :body => %r{^[^;/]} do |msg|
     user = User.from_message(msg)
     return if user.current_room.nil?
     Lingr.say(
@@ -406,14 +406,14 @@ EOT
   # auto approve
   subscription :request? do |s|
     write_to_stream s.approve!
-    jid = User.normalize_jid(s.from)
+    jid = User.normalize_jid(s.to)
     User.find_or_create(:jid => jid)
   end
 
   # auto unsubscribe
   subscription :unsubscribe? do |s|
     write_to_stream s.unsubscribe!
-    user = User.from_message(s)
+    user = User.filter(:jid => User.normalize_jid(s.to)).first
     user.remove_all_user_rooms
     user.destroy
   end
