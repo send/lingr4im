@@ -148,7 +148,8 @@ EOT
             next unless retry_ok
             if json['status'] == 'ok'
               json['events'].each do |evt|
-                status = evt['message'] || evt['presence']
+                #status = evt['message'] || evt['presence']
+                status = evt['message']
                 say user.jid, template(status) unless status.nil?
               end
               counter = json['counter']
