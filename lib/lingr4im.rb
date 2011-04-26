@@ -209,12 +209,16 @@ EOT
         info msg.from
         jid = User.normalize_jid(msg.from)
         user = User.find_or_create(:jid => jid)
-        user.set(
-          :username => json['user']['username'],
-          :session => json['session'],
-          :public_id => json['public_id']
-        ).save_changes
-        say user.jid, 'logged in'
+        if user.blank? or json['user'].nil? or json['user']['username'].nil?
+          say user.jid, 'failed login'
+        else 
+          user.set(
+            :username => json['user']['username'],
+            :session => json['session'],
+            :public_id => json['public_id']
+          ).save_changes
+          say user.jid, 'logged in'
+        end
       },
       :errback => Proc.new{|response|
         say msg.from, response
@@ -243,7 +247,7 @@ EOT
     Lingr.rooms(
       :session => user.session,
       :callback => Proc.new{|json|
-        say user.jid, json['rooms'].join(', ')
+        say user.jid, json['rooms'].join(', ') unless json['rooms'].nil?
       },
       :errback => Proc.new{|response|
         say user.jid, response
