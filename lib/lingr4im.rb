@@ -74,6 +74,7 @@ module Lingr4IM
     def help msg
       say msg.from, <<EOH
 usage:
+command prefix: '/' or ';'
 [messages]
 \tsay messages current room
 /login [user] [password]
