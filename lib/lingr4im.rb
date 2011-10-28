@@ -16,7 +16,7 @@ module Lingr4IM
   ERROR_WAIT_TIME = 60
   TIMEOUT = 30
   CONFIG = YAML.load_file(File.dirname(__FILE__) + '/config/app.yml')
-  
+
   log_file = CONFIG['log_file'] || STDOUT
   @@logger = Logger.new(log_file)
   case CONFIG['log_level']
@@ -212,7 +212,7 @@ EOT
         user = User.find_or_create(:jid => jid)
         if user.blank? or json['user'].nil? or json['user']['username'].nil?
           say user.jid, 'failed login'
-        else 
+        else
           user.set(
             :username => json['user']['username'],
             :session => json['session'],
@@ -226,7 +226,7 @@ EOT
       }
     )
   end
-  
+
   # logout command
   message :chat?, :body => %r{^(?:;|/)logout$} do |msg|
     user = User.from_message(msg)
@@ -557,7 +557,7 @@ EOT
         http = EM::HttpRequest.new(end_point).get(
           :timeout => TIMEOUT, :query => q
         )
-        
+
         http.callback do
           json = JSON.parse(http.response)
           opts[:callback].call(json) unless opts[:callback].nil?
